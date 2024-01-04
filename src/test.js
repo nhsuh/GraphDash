@@ -11,19 +11,11 @@ const edges = [
     { first: nodes[1], second: nodes[2] }, 
     { first: nodes[2], second: nodes[0] }, 
 ]
-
-/*const links = [
-    { source: {x: 250, y: 250 }, target: {x: 200, y: 200} },
-    { source: {x: 200, y: 200}, target: {x: 100, y: 300}},
-    { source: {x: 100, y: 300}, target: {x: 250, y: 250} }
-  ];*/
 const svg = d3.select("graph")
   .append("svg")
   .attr("class", "bg-gray-800 rounded-xl")
   .attr("width", 1000)
   .attr("height", 800);
-
-d3.select("graph").attr("class", "flex justify-center ")
 
 
 const line = d3.line()
