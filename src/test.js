@@ -29,7 +29,7 @@ svg.selectAll("path")
   .attr("d", (d) => line([{ x: d.first.x, y: d.first.y }, { x: d.second.x, y: d.second.y }]))
   .style("stroke", "white");
 
-const node_svg = svg.selectAll("circle")
+svg.selectAll("circle")
   .data(nodes) // Bind data to circles using links
   .enter()
   .append("circle")
@@ -50,11 +50,13 @@ svg.selectAll("text")
   .style("font-size", 12)
   .style("fill", "black");
 
-node_svg.call(d3.drag()
+svg.selectAll("circle").call(d3.drag()
     .on("start", dragstarted)
     .on("drag", dragged)
     .on("end", dragended)
 );
+
+document.getElementById("add-node").addEventListener("click", addNode);
 
 function dragstarted(event, d) {
     d3.select(this).classed("active", true);
@@ -77,4 +79,34 @@ function dragged(event, d) {
 
 function dragended(event, d){
     d3.select(this).classed("active", false);
+}
+
+function addNode() {
+    const new_node = {
+      name: "X", x: 200, y:200
+    }
+    nodes.push(new_node)
+    svg.selectAll("circle")
+    .data(nodes) // Bind data to circles using links
+    .enter()
+    .append("circle")
+    .attr("cx", (d) => d.x) // Position based on source node
+    .attr("cy", (d) => d.y)
+    .attr("r", 30) // Set radius
+    .style("fill", "steelblue");
+    svg.selectAll("circle").call(d3.drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended));
+    svg.selectAll("text")
+  .data(nodes)
+  .enter()
+  .append("text")
+  .attr("x", (d) => d.x)
+  .attr("y", (d) => d.y)
+  .text((d) => d.name)
+  .style("text-anchor", "middle") // Center text horizontally
+  .style("dominant-baseline", "middle")
+  .style("font-size", 12)
+  .style("fill", "black");
 }
