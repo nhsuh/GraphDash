@@ -78,21 +78,45 @@ document.getElementById("node-form").addEventListener("submit", (event) => {
 
   addNode(nodeName, nodeX, nodeY);
 
-  document.getElementById("node-name").value = ""
-  document.getElementById("node-x").value = null
-  document.getElementById("node-y").value = null
+  document.getElementById("node-name").value = "";
+  document.getElementById("node-x").value = null;
+  document.getElementById("node-y").value = null;
   document.getElementById("node-form").style.display = "none";
   document.getElementById("add-node").style.display = "block";
 });
 
-document.getElementById("cancel").addEventListener("click", () => {
-  document.getElementById("node-name").value = ""
-  document.getElementById("node-x").value = null
-  document.getElementById("node-y").value = null
+document.getElementById("cancel-nodes").addEventListener("click", () => {
+  document.getElementById("node-name").value = "";
+  document.getElementById("node-x").value = null;
+  document.getElementById("node-y").value = null;
   document.getElementById("node-form").style.display = "none";
   document.getElementById("add-node").style.display = "block";
+});
 
-})
+document.getElementById("add-edge").addEventListener("click", () => {
+  document.getElementById("edge-form").style.display = "block";
+  document.getElementById("add-edge").style.display = "none";
+});
+document.getElementById("edge-form").addEventListener("submit", (event) => {
+  event.preventDefault(); // Prevent default form submission
+  const fromNode = document.getElementById("from-node").value;
+  const toNode = document.getElementById("to-node").value;
+
+  addEdge(fromNode, toNode);
+
+  document.getElementById("from-node").value = "";
+  document.getElementById("to-node").value = "";
+  document.getElementById("edge-form").style.display = "none";
+  document.getElementById("add-edge").style.display = "block";
+});
+
+document.getElementById("cancel-edges").addEventListener("click", () => {
+  document.getElementById("node-name").value = "";
+  document.getElementById("node-x").value = null;
+  document.getElementById("node-y").value = null;
+  document.getElementById("edge-form").style.display = "none";
+  document.getElementById("add-edge").style.display = "block";
+});
 
 function dragstarted(event, d) {
   d3.select(this).classed("active", true);
@@ -161,4 +185,25 @@ function addNode(name, x, y) {
     .style("dominant-baseline", "middle")
     .style("font-size", 12)
     .style("fill", "white");
+}
+
+function addEdge(from, to) {
+  const from_i = nodes.findIndex((node) => node.name === from);
+  const to_i = nodes.findIndex((node) => node.name === to);
+  edges.push({ first: nodes[from_i], second: nodes[to_i] });
+
+  svg
+    .selectAll("path")
+    .data(edges)
+    .enter()
+    .append("path")
+    .attr("d", (d) =>
+      line([
+        { x: d.first.x, y: d.first.y },
+        { x: d.second.x, y: d.second.y },
+      ])
+    )
+    .style("stroke", "white");
+  svg.selectAll("circle").raise()
+  svg.selectAll("text").raise()
 }
