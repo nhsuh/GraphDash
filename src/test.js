@@ -57,7 +57,7 @@ svg
   .style("text-anchor", "middle") // Center text horizontally
   .style("dominant-baseline", "middle")
   .style("font-size", 12)
-  .style("fill", "black");
+  .style("fill", "white");
 
 svg
   .selectAll("circle")
@@ -77,7 +77,22 @@ document.getElementById("node-form").addEventListener("submit", (event) => {
   const nodeY = parseFloat(document.getElementById("node-y").value);
 
   addNode(nodeName, nodeX, nodeY);
+
+  document.getElementById("node-name").value = ""
+  document.getElementById("node-x").value = null
+  document.getElementById("node-y").value = null
+  document.getElementById("node-form").style.display = "none";
+  document.getElementById("add-node").style.display = "block";
 });
+
+document.getElementById("cancel").addEventListener("click", () => {
+  document.getElementById("node-name").value = ""
+  document.getElementById("node-x").value = null
+  document.getElementById("node-y").value = null
+  document.getElementById("node-form").style.display = "none";
+  document.getElementById("add-node").style.display = "block";
+
+})
 
 function dragstarted(event, d) {
   d3.select(this).classed("active", true);
@@ -145,5 +160,5 @@ function addNode(name, x, y) {
     .style("text-anchor", "middle") // Center text horizontally
     .style("dominant-baseline", "middle")
     .style("font-size", 12)
-    .style("fill", "black");
+    .style("fill", "white");
 }
