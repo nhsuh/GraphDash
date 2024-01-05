@@ -1,9 +1,10 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
+
 const nodes = [
-  { name: "A", x: 500, y: 500 },
-  { name: "B", x: 300, y: 300 },
-  { name: "C", x: 400, y: 450 },
+  { name: "A", x: 500, y: 500, adj: [] },
+  { name: "B", x: 300, y: 300, adj: [] },
+  { name: "C", x: 400, y: 450, adj: [] },
 ];
 
 const edges = [
@@ -11,11 +12,13 @@ const edges = [
   { first: nodes[1], second: nodes[2] },
   { first: nodes[2], second: nodes[0] },
 ];
+
+let eulerian = checkEulerian();
 const svg = d3
   .select("graph")
   .append("svg")
   .attr("class", "bg-gray-800 rounded-xl")
-  .attr("width", 1000)
+  .attr("width", 800)
   .attr("height", 800);
 
 const line = d3
@@ -64,6 +67,8 @@ svg
   .call(
     d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended)
   );
+
+calculateAdj();
 
 document.getElementById("add-node").addEventListener("click", () => {
   document.getElementById("node-form").style.display = "block";
@@ -153,6 +158,7 @@ function addNode(name, x, y) {
     name: name,
     x: x,
     y: y,
+    adj: []
   };
   nodes.push(new_node);
   svg
@@ -187,10 +193,25 @@ function addNode(name, x, y) {
     .style("fill", "white");
 }
 
+function calculateAdj() {
+  for (const edge of edges){
+    edge.first.adj.push(edge.second)
+    edge.second.adj.push(edge.first)
+  }
+  console.log(nodes)
+}
+
 function addEdge(from, to) {
   const from_i = nodes.findIndex((node) => node.name === from);
   const to_i = nodes.findIndex((node) => node.name === to);
   edges.push({ first: nodes[from_i], second: nodes[to_i] });
+
+  nodes[from_i].adj.push(nodes[to_i])
+
+  nodes[to_i].adj.push(nodes[from_i])
+  eulerian = checkEulerian()
+  console.log(nodes)
+  console.log(checkEulerian())
 
   svg
     .selectAll("path")
@@ -206,4 +227,13 @@ function addEdge(from, to) {
     .style("stroke", "white");
   svg.selectAll("circle").raise()
   svg.selectAll("text").raise()
+}
+
+function checkEulerian() {
+  for (const node of nodes) {
+    if (node.adj.length % 2) {
+      return false
+    }
+  }
+  return true
 }
