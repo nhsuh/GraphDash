@@ -8,9 +8,19 @@
     <body class="bg-cyan-950">
       <div class="p-4 flex justify-center"><p class="text-gray-300 text-4xl">Graph Dash</p></div>
       <div class="flex justify-around">
-        <div class="bg-gray-800 p-8 rounded-xl">
-          <div class="text-gray-300 text-3xl mx-12">Actions</div>
-          <button id="add-node" class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl">Add Node</button>
+        <div class="bg-gray-800 text-gray-300 p-8 rounded-xl">
+          <div class=" text-3xl mx-12">Actions</div>
+          <div>          
+            <button id="add-node" class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl">Add Node</button>
+            <form id="node-form" style="display: none;">
+              <label for="node-name">Node Name:</label>
+              <input type="text" id="node-name" required><br>
+              <label for="node-x">X-Coordinate:</label>
+              <input type="number" id="node-x" required><br>
+              <label for="node-y">Y-Coordinate:</label>
+              <input type="number" id="node-y" required><br>
+              <button type="submit">Add Node</button>
+            </form></div>
         </div>
         <graph></graph>
       </div>
