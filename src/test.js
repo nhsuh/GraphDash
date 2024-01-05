@@ -13,7 +13,12 @@ const edges = [
   { first: nodes[2], second: nodes[0] },
 ];
 
-let eulerian = checkEulerian();
+if (checkEulerian()) {
+  document.getElementById("eulerian").textContent = "Is Eulerian";
+}
+else {
+  document.getElementById("eulerian").textContent = "Is NOT Eulerian";
+}
 const svg = d3
   .select("graph")
   .append("svg")
@@ -209,9 +214,13 @@ function addEdge(from, to) {
   nodes[from_i].adj.push(nodes[to_i])
 
   nodes[to_i].adj.push(nodes[from_i])
-  eulerian = checkEulerian()
   console.log(nodes)
-  console.log(checkEulerian())
+  if (checkEulerian()) {
+    document.getElementById("eulerian").textContent = "Is Eulerian";
+  }
+  else {
+    document.getElementById("eulerian").textContent = "Is NOT Eulerian";
+  }
 
   svg
     .selectAll("path")
