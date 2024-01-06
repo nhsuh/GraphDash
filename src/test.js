@@ -1,24 +1,17 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-
-const nodes = [
+let nodes = [
   { name: "A", x: 500, y: 500, adj: [] },
   { name: "B", x: 300, y: 300, adj: [] },
   { name: "C", x: 400, y: 450, adj: [] },
 ];
 
-const edges = [
+let edges = [
   { first: nodes[0], second: nodes[1] },
   { first: nodes[1], second: nodes[2] },
   { first: nodes[2], second: nodes[0] },
 ];
 
-if (checkEulerian()) {
-  document.getElementById("eulerian").textContent = "Is Eulerian";
-}
-else {
-  document.getElementById("eulerian").textContent = "Is NOT Eulerian";
-}
 const svg = d3
   .select("graph")
   .append("svg")
@@ -74,6 +67,7 @@ svg
   );
 
 calculateAdj();
+checkEulerian();
 
 document.getElementById("add-node").addEventListener("click", () => {
   document.getElementById("node-form").style.display = "block";
@@ -121,14 +115,38 @@ document.getElementById("edge-form").addEventListener("submit", (event) => {
 });
 
 document.getElementById("cancel-edges").addEventListener("click", () => {
-  document.getElementById("node-name").value = "";
-  document.getElementById("node-x").value = null;
-  document.getElementById("node-y").value = null;
+  document.getElementById("from-node").value = "";
+  document.getElementById("to-node").value = "";
   document.getElementById("edge-form").style.display = "none";
   document.getElementById("add-edge").style.display = "block";
 });
 
-function dragstarted(event, d) {
+document.getElementById("rm-edge").addEventListener("click", () => {
+  document.getElementById("rm-edge-form").style.display = "block";
+  document.getElementById("rm-edge").style.display = "none";
+});
+
+document.getElementById("rm-edge-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const fromNode = document.getElementById("rm-from-node").value;
+  const toNode = document.getElementById("rm-to-node").value;
+
+  removeEdge(fromNode, toNode);
+
+  document.getElementById("rm-from-node").value = "";
+  document.getElementById("rm-to-node").value = "";
+  document.getElementById("rm-edge-form").style.display = "none";
+  document.getElementById("rm-edge").style.display = "block";
+});
+
+document.getElementById("cancel-rm-edges").addEventListener("click", () => {
+  document.getElementById("from-node").value = "";
+  document.getElementById("to-node").value = "";
+  document.getElementById("rm-edge-form").style.display = "none";
+  document.getElementById("rm-edge").style.display = "block";
+});
+
+function dragstarted() {
   d3.select(this).classed("active", true);
 }
 
@@ -163,7 +181,7 @@ function addNode(name, x, y) {
     name: name,
     x: x,
     y: y,
-    adj: []
+    adj: [],
   };
   nodes.push(new_node);
   svg
@@ -196,14 +214,15 @@ function addNode(name, x, y) {
     .style("dominant-baseline", "middle")
     .style("font-size", 12)
     .style("fill", "white");
+  checkEulerian();
 }
 
 function calculateAdj() {
-  for (const edge of edges){
-    edge.first.adj.push(edge.second)
-    edge.second.adj.push(edge.first)
+  for (const edge of edges) {
+    edge.first.adj.push(edge.second);
+    edge.second.adj.push(edge.first);
   }
-  console.log(nodes)
+  console.log(nodes);
 }
 
 function addEdge(from, to) {
@@ -211,16 +230,11 @@ function addEdge(from, to) {
   const to_i = nodes.findIndex((node) => node.name === to);
   edges.push({ first: nodes[from_i], second: nodes[to_i] });
 
-  nodes[from_i].adj.push(nodes[to_i])
+  nodes[from_i].adj.push(nodes[to_i]);
 
-  nodes[to_i].adj.push(nodes[from_i])
-  console.log(nodes)
-  if (checkEulerian()) {
-    document.getElementById("eulerian").textContent = "Is Eulerian";
-  }
-  else {
-    document.getElementById("eulerian").textContent = "Is NOT Eulerian";
-  }
+  nodes[to_i].adj.push(nodes[from_i]);
+  console.log(nodes);
+  checkEulerian();
 
   svg
     .selectAll("path")
@@ -234,15 +248,41 @@ function addEdge(from, to) {
       ])
     )
     .style("stroke", "white");
-  svg.selectAll("circle").raise()
-  svg.selectAll("text").raise()
+  svg.selectAll("circle").raise();
+  svg.selectAll("text").raise();
+}
+
+function removeEdge(fromNode, toNode) {
+  edges = edges.filter(
+    (edge) =>
+      !(edge.first.name === toNode && edge.second.name === fromNode) &&
+      !(edge.first.name === fromNode && edge.second.name === toNode)
+  );
+  svg.selectAll("path").remove();
+  svg
+    .selectAll("path")
+    .data(edges)
+    .enter()
+    .append("path")
+    .attr("d", (d) =>
+      line([
+        { x: d.first.x, y: d.first.y },
+        { x: d.second.x, y: d.second.y },
+      ])
+    )
+    .style("stroke", "white");
+  svg.selectAll("circle").raise();
+  svg.selectAll("text").raise();
+
+  checkEulerian();
 }
 
 function checkEulerian() {
   for (const node of nodes) {
-    if (node.adj.length % 2) {
-      return false
+    if (node.adj.length === 0 || node.adj.length % 2) {
+      document.getElementById("eulerian").textContent = "Is NOT Eulerian";
+      return
     }
   }
-  return true
+  document.getElementById("eulerian").textContent = "Is Eulerian";
 }
