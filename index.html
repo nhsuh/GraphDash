@@ -14,7 +14,7 @@
       <div class="bg-gray-800 text-gray-300 p-8 rounded-xl">
         <div class="text-3xl mx-12">Actions</div>
         <div class="flex justify-center">
-          <graph-button></graph-button>
+          <graph-button id="add-node" label="Add Node"></graph-button>
           <form id="node-form" style="display: none">
             <div class="flex flex-col">
               <div class="p-2">
@@ -55,7 +55,6 @@
               <div class="flex justify-center">
                 <button
                   id="cancel-nodes"
-                  type="cancel"
                   class="text-2xl text-gray-300 px-12 mt-4 bg-amber-700 hover:bg-amber-800 rounded-xl"
                 >
                   Cancel
@@ -65,12 +64,7 @@
           </form>
         </div>
         <div class="flex justify-center">
-          <button
-            id="add-edge"
-            class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl"
-          >
-            Add Edge
-          </button>
+          <graph-button id="add-edge" label="Add Edge"></graph-button>
           <form id="edge-form" style="display: none">
             <div class="flex flex-col">
               <div class="p-2">
@@ -112,12 +106,7 @@
           </form>
         </div>
         <div class="flex justify-center">
-          <button
-            id="rm-edge"
-            class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl"
-          >
-            Remove Edge
-          </button>
+          <graph-button id="rm-edge" label="Remove Edge"></graph-button>
           <form id="rm-edge-form" style="display: none">
             <div class="flex flex-col">
               <div class="p-2">
