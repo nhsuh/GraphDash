@@ -1,5 +1,5 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { addNode } from "./functions/operations.js";
+import { addNode, addEdge, removeEdge, removeNode, nodes, edges } from "./functions/operations.js";
 import {
   dragstarted,
   dragged,
@@ -8,18 +8,8 @@ import {
   clear,
 } from "./functions/ux.js";
 import { calculateAdj, checkEulerian } from "./functions/properties.js";
-import { addEdge, removeEdge } from "./functions/operations.js";
-export let nodes = [
-  { name: "A", x: 500, y: 500, adj: [] },
-  { name: "B", x: 300, y: 300, adj: [] },
-  { name: "C", x: 400, y: 450, adj: [] },
-];
 
-export let edges = [
-  { first: nodes[0], second: nodes[1] },
-  { first: nodes[1], second: nodes[2] },
-  { first: nodes[2], second: nodes[0] },
-];
+
 
 export const svg = d3
   .select("graph")
@@ -40,30 +30,30 @@ svg
   .append("path")
   .attr("d", (d) =>
     line([
-      { x: d.first.x, y: d.first.y },
-      { x: d.second.x, y: d.second.y },
+      { x: d.first[1].x, y: d.first[1].y },
+      { x: d.second[1].x, y: d.second[1].y },
     ])
   )
   .style("stroke", "white");
-
 svg
   .selectAll("circle")
-  .data(nodes) // Bind data to circles using links
+  .data(Array.from(nodes.values())) // Bind data to circles using links
   .enter()
   .append("circle")
-  .attr("cx", (d) => d.x) // Position based on source node
+  .attr("cx", (d) => 
+    d.x) // Position based on source node
   .attr("cy", (d) => d.y)
   .attr("r", 30) // Set radius
   .style("fill", "steelblue");
 
 svg
   .selectAll("text")
-  .data(nodes)
+  .data(Array.from(nodes.entries()))
   .enter()
   .append("text")
-  .attr("x", (d) => d.x)
-  .attr("y", (d) => d.y)
-  .text((d) => d.name)
+  .attr("x", (d) => d[1].x)
+  .attr("y", (d) => d[1].y)
+  .text((d) => d[0])
   .style("text-anchor", "middle") // Center text horizontally
   .style("dominant-baseline", "middle")
   .style("font-size", 12)
@@ -137,4 +127,23 @@ document.getElementById("rm-edge-form").addEventListener("submit", (event) => {
 document.getElementById("cancel-rm-edges").addEventListener("click", () => {
   clear(["rm-from-node", "rm-to-node"]);
   toggle("rm-edge", "rm-edge-form");
+});
+
+document.getElementById("rm-node").addEventListener("click", () => {
+  toggle("rm-node-form", "rm-node");
+});
+
+document.getElementById("cancel-rm-node").addEventListener("click", () => {
+  clear(["rm-node"]);
+  toggle("rm-node", "rm-node-form")
+})
+
+document.getElementById("rm-node-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const nodeName = document.getElementById("rm-node-name").value;
+  console.log(nodeName)
+  removeNode(nodeName);
+
+  clear(["rm-node"]);
+  toggle("rm-node", "rm-node-form")
 });
