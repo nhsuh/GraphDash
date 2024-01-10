@@ -1,7 +1,7 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { svg, line } from "../graph-svg.js";
 import { dragstarted, dragged, dragended } from "./ux.js";
-import { calculateAdj, checkEulerian } from "./properties.js";
+import { calculateAdj, checkEulerian, checkBipartite } from "./properties.js";
 
 export let nodes = new Map();
 
@@ -53,6 +53,7 @@ export function addNode(name, x, y) {
     .style("font-size", 12)
     .style("fill", "white");
   checkEulerian();
+  checkBipartite();
 }
 
 export function addEdge(from, to) {
@@ -77,6 +78,7 @@ export function addEdge(from, to) {
   .style("stroke", "white");
   svg.selectAll("circle").raise();
   svg.selectAll("text").raise();
+  checkBipartite();
 }
 
 export function removeEdge(fromNode, toNode) {
@@ -108,6 +110,7 @@ export function removeEdge(fromNode, toNode) {
   svg.selectAll("text").raise();
 
   checkEulerian();
+  checkBipartite();
 }
 
 export function removeNode(node) {
@@ -167,5 +170,6 @@ export function removeNode(node) {
   svg.selectAll("text").raise();
 
   checkEulerian();
+  checkBipartite();
 
 }

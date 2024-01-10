@@ -7,7 +7,7 @@ import {
   toggle,
   clear,
 } from "./functions/ux.js";
-import { calculateAdj, checkEulerian } from "./functions/properties.js";
+import { calculateAdj, checkEulerian, checkBipartite } from "./functions/properties.js";
 
 
 
@@ -67,6 +67,7 @@ svg
 
 calculateAdj();
 checkEulerian();
+checkBipartite();
 
 document.getElementById("add-node").addEventListener("click", () => {
   toggle("node-form", "add-node");
