@@ -1,5 +1,5 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { svg, line } from "../graph-svg.js";
+import { svg, ecdSvg, line, play_button } from "../graph-svg.js";
 import { dragstarted, dragged, dragended } from "./ux.js";
 import { calculateAdj, checkEulerian, checkBipartite } from "./properties.js";
 
@@ -172,4 +172,19 @@ export function removeNode(node) {
   checkEulerian();
   checkBipartite();
 
+}
+
+export function proveEcd() {
+  play_button.remove();
+  const pbi = ecdSvg
+  .append("text")
+  .attr("x", 100)
+  .attr("y", 100)
+  .text("Proof by Induction ")
+  .attr("class", "fill-gray-300").attr("font-size", 24)
+  const bc = ecdSvg.append("text")
+  .attr("x", 100)
+  .attr("y", 150)
+  .text("Base Case")
+  .attr("class", "fill-gray-300").attr("font-size", 24)
 }

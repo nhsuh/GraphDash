@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./dist/output.css" rel="stylesheet" />
+  </head>
+  <body class="bg-cyan-950">
+    <div class="p-4 flex justify-between">
+      <a href="./" class="text-gray-300 text-4xl px-12">Graph Dash</a>
+      <a href="./about.html" class="text-gray-300 text-3xl px-12">About</a>
+    </div>
+    <div class="bg-gray-800 text-gray-300 py-8 pl-8 rounded-xl my-4 mx-12">
+      <div class="flex">
+        <div class="text-cyan-300 text-3xl">Proposition:</div>
+        <div class="text-3xl ml-3">
+          If a graph is Eulerian, it can be decomposed into edge-disjoint and
+          exhaustive cycles.
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-center">
+      <ecd></ecd>
+    </div>
+  </body>
+</html>
+<script type="module" src="./src/graph-svg.js"></script>

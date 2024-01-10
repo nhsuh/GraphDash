@@ -9,10 +9,13 @@ export function checkEulerian() {
   for (const node of nodes) {
     console.log(node[1].adj)
     if (node[1].adj.length === 0 || node[1].adj.length % 2) {
-      document.getElementById("eulerian").textContent = "Is NOT Eulerian";
-      return;
+      if (document.getElementById("eulerian")) {
+        document.getElementById("eulerian").textContent = "Is NOT Eulerian";
+        return;
+      }
     }
   }
+  if (document.getElementById("eulerian"))
   document.getElementById("eulerian").textContent = "Is Eulerian";
 }
 
@@ -36,11 +39,13 @@ export function checkBipartite() {
   for (const node of nodes) {
     if (!color_map.has(node[0])) {
       if (!dfs(node[0], node[1], 0)) {
-        document.getElementById("bipartite").textContent = "Is NOT Bipartite";
+        if (document.getElementById("bipartite")) {
+          document.getElementById("bipartite").textContent = "Is NOT Bipartite";
+        }
         return false
       }
     }
   }
-  document.getElementById("bipartite").textContent = "Is Bipartite"
+  if (document.getElementById("bipartite")) document.getElementById("bipartite").textContent = "Is Bipartite"
   return true
 }
