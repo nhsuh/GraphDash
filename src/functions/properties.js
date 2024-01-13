@@ -5,6 +5,20 @@ export function calculateAdj() {
     edge.second[1].adj.push(edge.first[0]);
   }
 }
+
+export function calculateEdges() {
+  for (const node of nodes) {
+    for (const adjNode of node[1].adj) {
+      console.log(edges)
+      const exists = edges.some(edge =>  {
+        (edge.first == [node[0], node[1]] && edge.second == [adjNode, nodes.get(adjNode)]) || (edge.second == [node[0], node[1]] && edge.first == [adjNode, nodes.get(adjNode)]) 
+      })
+      if (!exists) {
+        edges.push({first: [node[0], node[1]], second:[adjNode, nodes.get(adjNode)] })
+      }
+    }
+  }
+}
 export function checkEulerian() {
   for (const node of nodes) {
     console.log(node[1].adj)

@@ -29,6 +29,8 @@ export function dragged(event, d) {
 
 export function dragended(event, d) {
   d3.select(this).classed("active", false);
+  const nodesObj = JSON.stringify(Object.fromEntries(nodes))
+  sessionStorage.setItem("nodesData", nodesObj);
 }
 
 export function toggle(open, close) {

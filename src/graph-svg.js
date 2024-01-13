@@ -6,7 +6,7 @@ import {
   removeNode,
   nodes,
   edges,
-  proveEcd
+  bcEcd
 } from "./functions/operations.js";
 import {
   dragstarted,
@@ -101,7 +101,7 @@ play_button.on("mouseover", () => {
 })
 
 play_button.on("click", () => {
-  proveEcd();
+  bcEcd();
 })
 document.getElementById("add-node")?.addEventListener("click", () => {
   toggle("node-form", "add-node");
@@ -128,7 +128,7 @@ document.getElementById("add-edge")?.addEventListener("click", () => {
   toggle("edge-form", "add-edge");
 });
 document.getElementById("edge-form")?.addEventListener("submit", (event) => {
-  event.preventDefault(); // Prevent default form submission
+  event.preventDefault(); 
   const fromNode = document.getElementById("from-node").value;
   const toNode = document.getElementById("to-node").value;
 
