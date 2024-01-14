@@ -3,13 +3,13 @@ import { svg, ecdSvg, line, play_button } from "../graph-svg.js";
 import { dragstarted, dragged, dragended } from "./ux.js";
 import { calculateEdges, checkEulerian, checkBipartite } from "./properties.js";
 
-export let nodes =
-  new Map(Object.entries(JSON.parse(sessionStorage.getItem("nodesData")))) ||
-  new Map([
-    ["A", { x: 500, y: 500, adj: ["B", "C"] }],
-    ["B", { x: 300, y: 300, adj: ["A", "C"] }],
-    ["C", { x: 400, y: 450, adj: ["A", "B"] }],
-  ]);
+const nodeHist = sessionStorage.getItem("nodesData")
+console.log(nodeHist)
+export let nodes = nodeHist ? new Map(Object.entries(JSON.parse(nodeHist))) :   new Map([
+  ["A", { x: 500, y: 500, adj: ["B", "C"] }],
+  ["B", { x: 300, y: 300, adj: ["A", "C"] }],
+  ["C", { x: 400, y: 450, adj: ["A", "B"] }],
+]);
 
 let next_button;
 
