@@ -4,11 +4,10 @@ import { dragstarted, dragged, dragended } from "./ux.js";
 import { calculateEdges, checkEulerian, checkBipartite } from "./properties.js";
 
 const nodeHist = sessionStorage.getItem("nodesData")
-console.log(nodeHist)
 export let nodes = nodeHist ? new Map(Object.entries(JSON.parse(nodeHist))) :   new Map([
-  ["A", { x: 500, y: 500, adj: ["B", "C"] }],
+  ["A", { x: 500, y: 500, adj: ["B"] }],
   ["B", { x: 300, y: 300, adj: ["A", "C"] }],
-  ["C", { x: 400, y: 450, adj: ["A", "B"] }],
+  ["C", { x: 400, y: 450, adj: ["B"] }],
 ]);
 
 let next_button;
@@ -16,6 +15,9 @@ let next_button;
 export let edges = [];
 
 calculateEdges();
+
+checkBipartite();
+checkEulerian();
 
 export function addNode(name, x, y) {
   const new_node = {
@@ -62,7 +64,7 @@ export function addNode(name, x, y) {
 }
 
 export function addEdge(from, to) {
-  edges.push({ first: [from, nodes.get(from)], second: [to, nodes.get(to)] });
+  edges.push([from, to]);
 
   nodes.get(from).adj.push(to);
   nodes.get(to).adj.push(from);
@@ -75,8 +77,8 @@ export function addEdge(from, to) {
     .append("path")
     .attr("d", (d) =>
       line([
-        { x: d.first[1].x, y: d.first[1].y },
-        { x: d.second[1].x, y: d.second[1].y },
+        { x: nodes.get(d[0]).x, y: nodes.get(d[0]).y },
+        { x: nodes.get(d[1]).x, y: nodes.get(d[1]).y },
       ])
     )
     .style("stroke", "white");
@@ -92,8 +94,8 @@ export function removeEdge(fromNode, toNode) {
   edges = edges.filter(
     (edge) =>
       !(
-        (edge.first[0] === toNode && edge.second[0] === fromNode) ||
-        (edge.first[0] === fromNode && edge.second[0] === toNode)
+        (edge[0] === toNode && edge[1] === fromNode) ||
+        (edge[0] === fromNode && edge[1] === toNode)
       )
   );
 
@@ -109,8 +111,8 @@ export function removeEdge(fromNode, toNode) {
     .append("path")
     .attr("d", (d) =>
       line([
-        { x: d.first[1].x, y: d.first[1].y },
-        { x: d.second[1].x, y: d.second[1].y },
+        { x: nodes.get(d[0]).x, y: nodes.get(d[0]).y },
+        { x: nodes.get(d[1]).x, y: nodes.get(d[1]).y },
       ])
     )
     .style("stroke", "white");
@@ -126,12 +128,11 @@ export function removeEdge(fromNode, toNode) {
 
 export function removeNode(node) {
   const neighbors = nodes.get(node).adj;
-  console.log(nodes.get(node).adj);
   nodes.delete(node);
   for (const n of neighbors)
     nodes.get(n).adj = nodes.get(n).adj.filter((neighbor) => neighbor !== node);
   edges = edges.filter(
-    (edge) => edge.first[0] !== node && edge.second[0] !== node
+    (edge) => edge[0] !== node && edge[1] !== node
   );
 
   svg.selectAll("path").remove();
@@ -144,8 +145,8 @@ export function removeNode(node) {
     .append("path")
     .attr("d", (d) =>
       line([
-        { x: d.first[1].x, y: d.first[1].y },
-        { x: d.second[1].x, y: d.second[1].y },
+        { x: nodes.get(d[0]).x, y: nodes.get(d[0]).y },
+        { x: nodes.get(d[1]).x, y: nodes.get(d[1]).y },
       ])
     )
     .style("stroke", "white");
@@ -292,4 +293,27 @@ function iHEcd() {
     .attr("cy", 500)
     .attr("r", 30)
     .attr("fill", "lightsteelblue");
+}
+
+export function contractEdge(fromNode, toNode, nodeName) {
+  const mid_x = (nodes.get(fromNode).x + nodes.get(toNode).x) / 2
+  const mid_y = (nodes.get(fromNode).y + nodes.get(toNode).y) / 2
+
+  addNode(nodeName, mid_x, mid_y)
+  for (const adjNode of nodes.get(fromNode).adj) {
+    if (adjNode !== nodeName) addEdge(adjNode, nodeName)
+    //addEdge(adj, nodeName)
+  }
+  for(const adjNode of nodes.get(toNode).adj) {
+    if (adjNode !== nodeName) addEdge(adjNode, nodeName)
+  }
+  removeNode(toNode)
+  removeNode(fromNode)
+  console.log(nodes)
+
+  checkEulerian();
+  checkBipartite();
+
+  const nodesObj = JSON.stringify(Object.fromEntries(nodes))
+  sessionStorage.setItem("nodesData", nodesObj);
 }

@@ -4,6 +4,7 @@ import {
   addEdge,
   removeEdge,
   removeNode,
+  contractEdge,
   nodes,
   edges,
   bcEcd
@@ -16,7 +17,6 @@ import {
   clear,
 } from "./functions/ux.js";
 import {
-  calculateAdj,
   checkEulerian,
   checkBipartite,
 } from "./functions/properties.js";
@@ -54,8 +54,8 @@ svg
   .append("path")
   .attr("d", (d) =>
     line([
-      { x: d.first[1].x, y: d.first[1].y },
-      { x: d.second[1].x, y: d.second[1].y },
+      { x: nodes.get(d[0]).x, y: nodes.get(d[0]).y },
+      { x: nodes.get(d[1]).x, y: nodes.get(d[1]).y },
     ])
   )
   .style("stroke", "white");
@@ -88,8 +88,6 @@ svg
     d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended)
   );
 
-calculateAdj();
-checkEulerian();
 checkBipartite();
 
 play_button.on("mouseover", () => {
@@ -176,9 +174,26 @@ document.getElementById("cancel-rm-node")?.addEventListener("click", () => {
 document.getElementById("rm-node-form")?.addEventListener("submit", (event) => {
   event.preventDefault();
   const nodeName = document.getElementById("rm-node-name").value;
-  console.log(nodeName);
   removeNode(nodeName);
 
   clear(["rm-node"]);
   toggle("rm-node", "rm-node-form");
+});
+document.getElementById("ct-edge")?.addEventListener("click", () => {
+  toggle("ct-edge-form", "ct-edge")
+})
+document.getElementById("cancel-ct-edge")?.addEventListener("click", () => {
+  clear(["ct-edge-1", "ct-edge-2"])
+  toggle("ct-edge", "ct-edge-form")
+})
+
+document.getElementById("ct-edge-form")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const fromNode = document.getElementById("ct-edge-1").value;
+  const toNode = document.getElementById("ct-edge-2").value;
+  const nodeName = document.getElementById("ct-node-name").value;
+  contractEdge(fromNode, toNode, nodeName);
+
+  clear(["ct-edge-1", "ct-edge-2", "ct-node-name"])
+  toggle("ct-edge", "ct-edge-form")
 });
