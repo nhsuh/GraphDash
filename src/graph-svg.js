@@ -7,7 +7,7 @@ import {
   contractEdge,
   nodes,
   edges,
-  bcEcd
+  bcEcd, bfs
 } from "./functions/operations.js";
 import {
   dragstarted,
@@ -197,3 +197,15 @@ document.getElementById("ct-edge-form")?.addEventListener("submit", (event) => {
   clear(["ct-edge-1", "ct-edge-2", "ct-node-name"])
   toggle("ct-edge", "ct-edge-form")
 });
+
+document.getElementById("bfs")?.addEventListener("click", () => {
+  toggle("bfs-form", "bfs")
+})
+document.getElementById("cancel-bfs")?.addEventListener("click", () => {
+  clear(["bfs-start"])
+  toggle("bfs", "bfs-form")
+})
+document.getElementById("bfs-form")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  bfs(document.getElementById("bfs-start").value)
+})

@@ -58,18 +58,5 @@ export function checkBipartite() {
   }  
   if (document.getElementById("bipartite")) document.getElementById("bipartite").textContent = "Is Bipartite"
   return true
-  /*let color_map = new Map()
-  console.log(nodes)
-  for (const [node, info] of nodes.entries()) {
-    console.log(node)
-    console.log(color_map)
-    if (!color_map.has(node)) {
-      if (!dfs(node, info, 0)) {
-       
-        return false
-      }
-    }
-  }
-  if (document.getElementById("bipartite")) document.getElementById("bipartite").textContent = "Is Bipartite"
-  return true*/
+
 }

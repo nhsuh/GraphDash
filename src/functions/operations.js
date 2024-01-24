@@ -317,3 +317,22 @@ export function contractEdge(fromNode, toNode, nodeName) {
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
 }
+
+export function bfs(startNode) {
+  console.log("bfs", startNode)
+  let visited = []
+  let visiting_queue = []
+  visiting_queue.push(startNode)
+  visited.push(startNode)
+  while (visiting_queue.length !== 0) {
+    let curr = visiting_queue[0]
+    console.log(curr)
+    visiting_queue.splice(0, 1)
+    for (let neighbor of nodes.get(curr).adj) {
+      if (!visited.includes(neighbor)) {
+        visiting_queue.push(neighbor)
+        visited.push(neighbor)
+      }
+    }
+  }
+}
