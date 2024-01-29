@@ -67,7 +67,7 @@ svg
   .attr("cx", (d) => d.x) // Position based on source node
   .attr("cy", (d) => d.y)
   .attr("r", 30) // Set radius
-  .style("fill", "steelblue");
+  .style("fill", (d) => d.color);
 
 svg
   .selectAll("text")

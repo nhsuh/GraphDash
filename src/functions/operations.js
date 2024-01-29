@@ -5,9 +5,9 @@ import { calculateEdges, checkEulerian, checkBipartite } from "./properties.js";
 
 const nodeHist = sessionStorage.getItem("nodesData")
 export let nodes = nodeHist ? new Map(Object.entries(JSON.parse(nodeHist))) :   new Map([
-  ["A", { x: 500, y: 500, adj: ["B"] }],
-  ["B", { x: 300, y: 300, adj: ["A", "C"] }],
-  ["C", { x: 400, y: 450, adj: ["B"] }],
+  ["A", { x: 500, y: 500, adj: ["B"], color: "steelblue" }],
+  ["B", { x: 300, y: 300, adj: ["A", "C"], color: "steelblue"  }],
+  ["C", { x: 400, y: 450, adj: ["B"], color: "steelblue"  }],
 ]);
 
 let next_button;
@@ -24,6 +24,7 @@ export function addNode(name, x, y) {
     x: x,
     y: y,
     adj: [],
+    color: "steelblue"
   };
   nodes.set(name, new_node);
   svg
@@ -34,7 +35,7 @@ export function addNode(name, x, y) {
     .attr("cx", (d) => d.x) // Position based on source node
     .attr("cy", (d) => d.y)
     .attr("r", 30) // Set radius
-    .style("fill", "steelblue");
+    .style("fill", (d) => d.color);
   svg
     .selectAll("circle")
     .call(
@@ -158,7 +159,7 @@ export function removeNode(node) {
     .attr("cx", (d) => d.x) // Position based on source node
     .attr("cy", (d) => d.y)
     .attr("r", 30) // Set radius
-    .style("fill", "steelblue");
+    .style("fill", (d) => d.color);
   svg
     .selectAll("circle")
     .call(
@@ -318,7 +319,10 @@ export function contractEdge(fromNode, toNode, nodeName) {
   sessionStorage.setItem("nodesData", nodesObj);
 }
 
-export function bfs(startNode) {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+export async function bfs(startNode) {
   console.log("bfs", startNode)
   let visited = []
   let visiting_queue = []
@@ -327,6 +331,9 @@ export function bfs(startNode) {
   while (visiting_queue.length !== 0) {
     let curr = visiting_queue[0]
     console.log(curr)
+    await sleep(500)
+    nodes.get(curr).color = "seagreen"
+    updateColor()
     visiting_queue.splice(0, 1)
     for (let neighbor of nodes.get(curr).adj) {
       if (!visited.includes(neighbor)) {
@@ -335,4 +342,40 @@ export function bfs(startNode) {
       }
     }
   }
+}
+function updateColor() {
+  console.log(nodes)
+  svg.selectAll("circle").remove();
+  svg.selectAll("text").remove();
+  svg
+    .selectAll("circle")
+    .data(nodes.values()) // Bind data to circles using links
+    .enter()
+    .append("circle")
+    .attr("cx", (d) => d.x) // Position based on source node
+    .attr("cy", (d) => d.y)
+    .attr("r", 30) // Set radius
+    .style("fill", (d) => 
+      d.color);
+  svg
+    .selectAll("circle")
+    .call(
+      d3
+        .drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended)
+    );
+  svg
+    .selectAll("text")
+    .data(nodes.entries())
+    .enter()
+    .append("text")
+    .attr("x", (d) => d[1].x)
+    .attr("y", (d) => d[1].y)
+    .text((d) => d[0])
+    .style("text-anchor", "middle") // Center text horizontally
+    .style("dominant-baseline", "middle")
+    .style("font-size", 12)
+    .style("fill", "white");
 }
