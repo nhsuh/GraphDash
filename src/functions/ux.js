@@ -16,8 +16,8 @@ export function dragged(event, d) {
     .data(edges)
     .attr("d", (d) =>
       line([
-        { x: nodes.get(d[0]).x, y: nodes.get(d[0]).y },
-        { x: nodes.get(d[1]).x, y: nodes.get(d[1]).y },
+        { x: nodes.get(d[0][0]).x, y: nodes.get(d[0][0]).y },
+        { x: nodes.get(d[0][1]).x, y: nodes.get(d[0][1]).y },
       ])
     );
   svg

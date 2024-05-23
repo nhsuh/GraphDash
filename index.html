@@ -15,221 +15,23 @@
         <div class="text-3xl mx-12">Actions</div>
         <div class="flex justify-center">
           <graph-button id="add-node" label="Add Node"></graph-button>
-          <form id="node-form" style="display: none">
-            <div class="flex flex-col">
-              <div class="p-2">
-                <label for="node-name">Node Name:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="node-name"
-                  required
-                />
-              </div>
-              <div class="p-2">
-                <label for="node-x">X-Coordinate:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="number"
-                  id="node-x"
-                  required
-                />
-              </div>
-              <div class="p-2">
-                <label for="node-y">Y-Coordinate:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="number"
-                  id="node-y"
-                  required
-                />
-              </div>
-              <div class="flex justify-center">
-                <button
-                  type="submit"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl"
-                >
-                  Add Node
-                </button>
-              </div>
-              <div class="flex justify-center">
-                <button
-                  id="cancel-nodes"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-amber-700 hover:bg-amber-800 rounded-xl"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
+          <add-node-form id="node-form" style="display:none"></add-node-form>
         </div>
         <div class="flex justify-center">
           <graph-button id="add-edge" label="Add Edge"></graph-button>
-          <form id="edge-form" style="display: none">
-            <div class="flex flex-col">
-              <div class="p-2">
-                <label for="from-node">From:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="from-node"
-                  required
-                />
-              </div>
-              <div class="p-2">
-                <label for="to-node">To:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="to-node"
-                  required
-                />
-              </div>
-              <div class="flex justify-center">
-                <button
-                  type="submit"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl"
-                >
-                  Add Edge
-                </button>
-              </div>
-              <div class="flex justify-center">
-                <button
-                  id="cancel-edges"
-                  type="cancel"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-amber-700 hover:bg-amber-800 rounded-xl"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
+          <add-edge-form id="edge-form" style="display: none"></add-edge-form>
         </div>
         <div class="flex justify-center">
           <graph-button id="rm-edge" label="Remove Edge"></graph-button>
-          <form id="rm-edge-form" style="display: none">
-            <div class="flex flex-col">
-              <div class="p-2">
-                <label for="rm-from-node">From:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="rm-from-node"
-                  required
-                />
-              </div>
-              <div class="p-2">
-                <label for="rm-to-node">To:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="rm-to-node"
-                  required
-                />
-              </div>
-              <div class="flex justify-center">
-                <button
-                  type="submit"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl"
-                >
-                  Remove Edge
-                </button>
-              </div>
-              <div class="flex justify-center">
-                <button
-                  id="cancel-rm-edges"
-                  type="cancel"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-amber-700 hover:bg-amber-800 rounded-xl"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
+          <rm-edge-form id="rm-edge-form" style="display: none"></rm-edge-form>
         </div>
         <div>
           <graph-button id="rm-node" label="Remove Node"></graph-button>
-          <form id="rm-node-form" style="display: none">
-            <div class="flex flex-col">
-              <div class="p-2">
-                <label for="rm-node-name">Node Name:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="rm-node-name"
-                  required
-                />
-              </div>
-              <div class="flex justify-center">
-                <button
-                  type="submit"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl"
-                >
-                  Remove Node
-                </button>
-              </div>
-              <div class="flex justify-center">
-                <button
-                  id="cancel-rm-node"
-                  type="cancel"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-amber-700 hover:bg-amber-800 rounded-xl"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
+          <rm-node-form  id="rm-node-form" style="display: none"></rm-node-form>
         </div>
         <div>
           <graph-button id="ct-edge" label="Contract Edge"></graph-button>
-          <form id="ct-edge-form" style="display: none">
-            <div class="flex flex-col">
-              <div class="p-2">
-                <label for="ct-edge-1">From Node:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="ct-edge-1"
-                  required
-                />
-              </div>
-              <div class="p-2">
-                <label for="ct-edge-2">To Node:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="ct-edge-2"
-                  required
-                />
-              </div>
-              <div class="p-2">
-                <label for="ct-node-name">New Node Name:</label>
-                <input
-                  class="bg-gray-200 rounded-xl text-cyan-800 pl-2"
-                  type="text"
-                  id="ct-node-name"
-                  required
-                />
-              </div>
-              <div class="flex justify-center">
-                <button
-                  type="submit"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-cyan-800 hover:bg-cyan-700 rounded-xl"
-                >
-                  Contract
-                </button>
-              </div>
-              <div class="flex justify-center">
-                <button
-                  id="cancel-ct-edge"
-                  type="cancel"
-                  class="text-2xl text-gray-300 px-12 mt-4 bg-amber-700 hover:bg-amber-800 rounded-xl"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
+          <ct-edge-form></ct-edge-form>
         </div>
         <div class="flex justify-center">
           <graph-button id ="bfs" label="B F S"></graph-button>
@@ -276,3 +78,8 @@
 </html>
 <script type="module" src="./src/graph-svg.js"></script>
 <script src="./src/components/graph-button.js"></script>
+<script src="./src/components/add-node-form.js"></script>
+<script src="./src/components/add-edge-form.js"></script>
+<script src="./src/components/rm-edge-form.js"></script>
+<script src="./src/components/rm-node-form.js"></script>
+<script src="./src/components/ct-edge-form.js"></script>

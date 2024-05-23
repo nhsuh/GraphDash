@@ -5,15 +5,16 @@ import { calculateEdges, checkEulerian, checkBipartite } from "./properties.js";
 
 const nodeHist = sessionStorage.getItem("nodesData")
 export let nodes = nodeHist ? new Map(Object.entries(JSON.parse(nodeHist))) :   new Map([
-  ["A", { x: 500, y: 500, adj: ["B"], color: "steelblue" }],
-  ["B", { x: 300, y: 300, adj: ["A", "C"], color: "steelblue"  }],
-  ["C", { x: 400, y: 450, adj: ["B"], color: "steelblue"  }],
+  ["A", { x: 500, y: 500, adj: [["B", null]], color: "steelblue" }],
+  ["B", { x: 300, y: 300, adj: [["A", null], ["C", null]], color: "steelblue"  }],
+  ["C", { x: 400, y: 450, adj: [["B", null]], color: "steelblue"  }],
 ]);
 
 let next_button;
 
 export let edges = [];
 
+console.log(nodes)
 calculateEdges();
 
 checkBipartite();
@@ -57,18 +58,15 @@ export function addNode(name, x, y) {
     .style("dominant-baseline", "middle")
     .style("font-size", 12)
     .style("fill", "white");
-  checkEulerian();
-  checkBipartite();
-
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
 }
 
 export function addEdge(from, to) {
-  edges.push([from, to]);
+  edges.push([[from, to], null]);
 
-  nodes.get(from).adj.push(to);
-  nodes.get(to).adj.push(from);
+  nodes.get(from).adj.push([to, null]);
+  nodes.get(to).adj.push([from, null]);
   checkEulerian();
 
   svg
@@ -78,25 +76,25 @@ export function addEdge(from, to) {
     .append("path")
     .attr("d", (d) =>
       line([
-        { x: nodes.get(d[0]).x, y: nodes.get(d[0]).y },
-        { x: nodes.get(d[1]).x, y: nodes.get(d[1]).y },
+        { x: nodes.get(d[0][0]).x, y: nodes.get(d[0][0]).y },
+        { x: nodes.get(d[0][1]).x, y: nodes.get(d[0][1]).y },
       ])
     )
     .style("stroke", "white");
   svg.selectAll("circle").raise();
   svg.selectAll("text").raise();
-  checkBipartite();
 
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
 }
 
 export function removeEdge(fromNode, toNode) {
+  console.log(edges)
   edges = edges.filter(
     (edge) =>
       !(
-        (edge[0] === toNode && edge[1] === fromNode) ||
-        (edge[0] === fromNode && edge[1] === toNode)
+        (edge[0][0] === toNode && edge[0][1] === fromNode) ||
+        (edge[0][0] === fromNode && edge[0][1] === toNode)
       )
   );
 
@@ -112,16 +110,14 @@ export function removeEdge(fromNode, toNode) {
     .append("path")
     .attr("d", (d) =>
       line([
-        { x: nodes.get(d[0]).x, y: nodes.get(d[0]).y },
-        { x: nodes.get(d[1]).x, y: nodes.get(d[1]).y },
+        { x: nodes.get(d[0][0]).x, y: nodes.get(d[0][0]).y },
+        { x: nodes.get(d[0][1]).x, y: nodes.get(d[0][1]).y },
       ])
     )
     .style("stroke", "white");
   svg.selectAll("circle").raise();
   svg.selectAll("text").raise();
 
-  checkEulerian();
-  checkBipartite();
 
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
@@ -131,9 +127,9 @@ export function removeNode(node) {
   const neighbors = nodes.get(node).adj;
   nodes.delete(node);
   for (const n of neighbors)
-    nodes.get(n).adj = nodes.get(n).adj.filter((neighbor) => neighbor !== node);
+    nodes.get(n[0]).adj = nodes.get(n[0]).adj.filter((neighbor) => neighbor[0] !== node);
   edges = edges.filter(
-    (edge) => edge[0] !== node && edge[1] !== node
+    (edge) => edge[0][0] !== node && edge[0][1] !== node
   );
 
   svg.selectAll("path").remove();
@@ -146,8 +142,8 @@ export function removeNode(node) {
     .append("path")
     .attr("d", (d) =>
       line([
-        { x: nodes.get(d[0]).x, y: nodes.get(d[0]).y },
-        { x: nodes.get(d[1]).x, y: nodes.get(d[1]).y },
+        { x: nodes.get(d[0][0]).x, y: nodes.get(d[0][0]).y },
+        { x: nodes.get(d[0][1]).x, y: nodes.get(d[0][1]).y },
       ])
     )
     .style("stroke", "white");
@@ -185,8 +181,6 @@ export function removeNode(node) {
   svg.selectAll("circle").raise();
   svg.selectAll("text").raise();
 
-  checkEulerian();
-  checkBipartite();
 
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
@@ -302,18 +296,17 @@ export function contractEdge(fromNode, toNode, nodeName) {
 
   addNode(nodeName, mid_x, mid_y)
   for (const adjNode of nodes.get(fromNode).adj) {
-    if (adjNode !== nodeName) addEdge(adjNode, nodeName)
+    if (adjNode[0] !== nodeName) addEdge(adjNode[0], nodeName)
     //addEdge(adj, nodeName)
   }
   for(const adjNode of nodes.get(toNode).adj) {
-    if (adjNode !== nodeName) addEdge(adjNode, nodeName)
+    if (adjNode[0] !== nodeName) addEdge(adjNode[0], nodeName)
   }
   removeNode(toNode)
   removeNode(fromNode)
-  console.log(nodes)
 
-  checkEulerian();
-  checkBipartite();
+  console.log(nodes)
+  console.log(edges)
 
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
