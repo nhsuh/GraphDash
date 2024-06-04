@@ -6,8 +6,7 @@ import {
   removeNode,
   contractEdge,
   nodes,
-  edges,
-  bcEcd, bfs
+  edges,bfs
 } from "./functions/operations.js";
 import {
   dragstarted,

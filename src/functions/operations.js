@@ -1,5 +1,6 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { svg, ecdSvg, line, play_button } from "../graph-svg.js";
+import { svg } from "../graph-svg.js";
+import { refresh, updateColor } from "./aux.js";
 import { dragstarted, dragged, dragended } from "./ux.js";
 import { calculateEdges, checkEulerian, checkBipartite } from "./properties.js";
 
@@ -9,8 +10,6 @@ export let nodes = nodeHist ? new Map(Object.entries(JSON.parse(nodeHist))) :   
   ["B", { x: 300, y: 300, adj: [["A", null], ["C", null]], color: "steelblue"  }],
   ["C", { x: 400, y: 450, adj: [["B", null]], color: "steelblue"  }],
 ]);
-
-let next_button;
 
 export let edges = [];
 
@@ -28,37 +27,7 @@ export function addNode(name, x, y) {
     color: "steelblue"
   };
   nodes.set(name, new_node);
-  svg
-    .selectAll("circle")
-    .data(nodes.values()) // Bind data to circles using links
-    .enter()
-    .append("circle")
-    .attr("cx", (d) => d.x) // Position based on source node
-    .attr("cy", (d) => d.y)
-    .attr("r", 30) // Set radius
-    .style("fill", (d) => d.color);
-  svg
-    .selectAll("circle")
-    .call(
-      d3
-        .drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended)
-    );
-  svg
-    .selectAll("text")
-    .data(nodes.entries())
-    .enter()
-    .append("text")
-    .attr("x", (d) => d[1].x)
-    .attr("y", (d) => d[1].y)
-    .text((d) => d[0])
-    .style("text-anchor", "middle") // Center text horizontally
-    .style("dominant-baseline", "middle")
-    .style("font-size", 12)
-    .style("fill", "white");
-  const nodesObj = JSON.stringify(Object.fromEntries(nodes))
+  refresh();  const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
 }
 
@@ -69,20 +38,7 @@ export function addEdge(from, to) {
   nodes.get(to).adj.push([from, null]);
   checkEulerian();
 
-  svg
-    .selectAll("path")
-    .data(edges)
-    .enter()
-    .append("path")
-    .attr("d", (d) =>
-      line([
-        { x: nodes.get(d[0][0]).x, y: nodes.get(d[0][0]).y },
-        { x: nodes.get(d[0][1]).x, y: nodes.get(d[0][1]).y },
-      ])
-    )
-    .style("stroke", "white");
-  svg.selectAll("circle").raise();
-  svg.selectAll("text").raise();
+refresh();
 
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
@@ -102,21 +58,7 @@ export function removeEdge(fromNode, toNode) {
   nodes.get(fromNode).adj.splice(adj_from, 1);
   const adj_to = nodes.get(toNode).adj.findIndex((node) => node === fromNode);
   nodes.get(toNode).adj.splice(adj_to, 1);
-  svg.selectAll("path").remove();
-  svg
-    .selectAll("path")
-    .data(edges)
-    .enter()
-    .append("path")
-    .attr("d", (d) =>
-      line([
-        { x: nodes.get(d[0][0]).x, y: nodes.get(d[0][0]).y },
-        { x: nodes.get(d[0][1]).x, y: nodes.get(d[0][1]).y },
-      ])
-    )
-    .style("stroke", "white");
-  svg.selectAll("circle").raise();
-  svg.selectAll("text").raise();
+  refresh();
 
 
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
@@ -132,163 +74,13 @@ export function removeNode(node) {
     (edge) => edge[0][0] !== node && edge[0][1] !== node
   );
 
-  svg.selectAll("path").remove();
-  svg.selectAll("circle").remove();
-  svg.selectAll("text").remove();
-  svg
-    .selectAll("path")
-    .data(edges)
-    .enter()
-    .append("path")
-    .attr("d", (d) =>
-      line([
-        { x: nodes.get(d[0][0]).x, y: nodes.get(d[0][0]).y },
-        { x: nodes.get(d[0][1]).x, y: nodes.get(d[0][1]).y },
-      ])
-    )
-    .style("stroke", "white");
-  svg
-    .selectAll("circle")
-    .data(nodes.values()) // Bind data to circles using links
-    .enter()
-    .append("circle")
-    .attr("cx", (d) => d.x) // Position based on source node
-    .attr("cy", (d) => d.y)
-    .attr("r", 30) // Set radius
-    .style("fill", (d) => d.color);
-  svg
-    .selectAll("circle")
-    .call(
-      d3
-        .drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended)
-    );
-  svg
-    .selectAll("text")
-    .data(nodes.entries())
-    .enter()
-    .append("text")
-    .attr("x", (d) => d[1].x)
-    .attr("y", (d) => d[1].y)
-    .text((d) => d[0])
-    .style("text-anchor", "middle") // Center text horizontally
-    .style("dominant-baseline", "middle")
-    .style("font-size", 12)
-    .style("fill", "white");
-
-  svg.selectAll("circle").raise();
-  svg.selectAll("text").raise();
+  refresh();
 
 
   const nodesObj = JSON.stringify(Object.fromEntries(nodes))
   sessionStorage.setItem("nodesData", nodesObj);
 }
 
-export function bcEcd() {
-  play_button.remove();
-  const pbi = ecdSvg
-    .append("text")
-    .attr("x", 75)
-    .attr("y", 75)
-    .text("Proof by Induction ")
-    .attr("class", "fill-gray-300")
-    .attr("font-size", 24);
-  const bc1 = ecdSvg
-    .append("text")
-    .attr("x", 75)
-    .attr("y", 125)
-    .text("Base Case: An Eulerian graph with 0 edges has 0 vertices.")
-    .attr("class", "fill-gray-300")
-    .attr("font-size", 24);
-  const bc2 = ecdSvg
-    .append("text")
-    .attr("x", 75)
-    .attr("y", 165)
-    .text("It can be decomposed into trivial cycles that will be exhaustive. ")
-    .attr("class", "fill-gray-300")
-    .attr("font-size", 24);
-  next_button = ecdSvg
-    .append("text")
-    .attr("x", 1050)
-    .attr("y", 650)
-    .text("Next")
-    .attr("class", "fill-gray-300")
-    .attr("font-size", 24);
-
-  next_button
-    .on("mouseover", () => {
-      next_button.style("cursor", "pointer");
-    })
-    .on("mouseout", () => {
-      next_button.style("cursor", "default");
-    });
-  next_button.on("click", () => {
-    pbi.remove();
-    bc1.remove();
-    bc2.remove();
-    iHEcd();
-  });
-}
-
-function iHEcd() {
-  const ihL = ecdSvg
-    .append("text")
-    .attr("x", 75)
-    .attr("y", 75)
-    .text("Inductive Hypothesis")
-    .attr("class", "fill-gray-300")
-    .attr("font-size", 24);
-  const ih = ecdSvg
-    .append("text")
-    .attr("x", 75)
-    .attr("y", 125)
-    .text(
-      "Suppose the proposition holds for all graphs with less than m edges:"
-    )
-    .attr("class", "fill-gray-300")
-    .attr("font-size", 24);
-  const ihG = ecdSvg
-    .append("text")
-    .attr("x", 200)
-    .attr("y", 400)
-    .text("G =")
-    .attr("class", "fill-gray-300")
-    .attr("font-size", 48);
-
-  const ihGraph = ecdSvg
-    .append("circle")
-    .attr("cx", 500)
-    .attr("cy", 400)
-    .attr("r", 200)
-    .attr("fill", "lightslategray");
-
-  const node1 = ecdSvg
-    .append("circle")
-    .attr("cx", 400)
-    .attr("cy", 300)
-    .attr("r", 30)
-    .attr("fill", "lightsteelblue");
-  const node2 = ecdSvg
-    .append("circle")
-    .attr("cx", 450)
-    .attr("cy", 500)
-    .attr("r", 30)
-    .attr("fill", "lightsteelblue");
-  const node3 = ecdSvg
-    .append("circle")
-    .attr("cx", 550)
-    .attr("cy", 400)
-    .attr("r", 30)
-    .attr("fill", "lightsteelblue");
-  const node4 = ecdSvg
-    .append("circle")
-    .attr("cx", 580)
-    .attr("cy", 500)
-    .attr("r", 30)
-    .attr("fill", "lightsteelblue");
-}
 
 export function contractEdge(fromNode, toNode, nodeName) {
   const mid_x = (nodes.get(fromNode).x + nodes.get(toNode).x) / 2
@@ -329,46 +121,10 @@ export async function bfs(startNode) {
     updateColor()
     visiting_queue.splice(0, 1)
     for (let neighbor of nodes.get(curr).adj) {
-      if (!visited.includes(neighbor)) {
-        visiting_queue.push(neighbor)
-        visited.push(neighbor)
+      if (!visited.includes(neighbor[0])) {
+        visiting_queue.push(neighbor[0])
+        visited.push(neighbor[0])
       }
     }
   }
-}
-function updateColor() {
-  console.log(nodes)
-  svg.selectAll("circle").remove();
-  svg.selectAll("text").remove();
-  svg
-    .selectAll("circle")
-    .data(nodes.values()) // Bind data to circles using links
-    .enter()
-    .append("circle")
-    .attr("cx", (d) => d.x) // Position based on source node
-    .attr("cy", (d) => d.y)
-    .attr("r", 30) // Set radius
-    .style("fill", (d) => 
-      d.color);
-  svg
-    .selectAll("circle")
-    .call(
-      d3
-        .drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended)
-    );
-  svg
-    .selectAll("text")
-    .data(nodes.entries())
-    .enter()
-    .append("text")
-    .attr("x", (d) => d[1].x)
-    .attr("y", (d) => d[1].y)
-    .text((d) => d[0])
-    .style("text-anchor", "middle") // Center text horizontally
-    .style("dominant-baseline", "middle")
-    .style("font-size", 12)
-    .style("fill", "white");
 }
