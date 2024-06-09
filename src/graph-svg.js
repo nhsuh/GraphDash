@@ -18,6 +18,7 @@ import {
 import {
   checkEulerian,
   checkBipartite,
+  calculateEdges,
 } from "./functions/properties.js";
 
 export const svg = d3
@@ -69,10 +70,11 @@ svg
   .style("fill", (d) => d.color);
 
 svg
-  .selectAll("text")
+  .selectAll(".node-labels")
   .data(Array.from(nodes.entries()))
   .enter()
   .append("text")
+  .attr("class", "node-labels")
   .attr("x", (d) => d[1].x)
   .attr("y", (d) => d[1].y)
   .text((d) => d[0])
@@ -80,6 +82,21 @@ svg
   .style("dominant-baseline", "middle")
   .style("font-size", 12)
   .style("fill", "white");
+
+calculateEdges()
+
+  svg
+  .selectAll(".edge-weights")
+  .data(edges)
+  .enter()
+  .append("text")
+  .attr("class", "edge-weights")
+  .attr("x", (d) => ((nodes.get(d[0][1]).x + nodes.get(d[0][0]).x ) / 2) + 10)
+  .attr("y", (d) => ((nodes.get(d[0][1]).y + nodes.get(d[0][0]).y) /2) -10)
+  .text((d) => d[1])
+  .style("font-size", 12)
+  .style("fill", "white");
+
 
 svg
   .selectAll("circle")
@@ -110,7 +127,7 @@ document.getElementById("node-form")?.addEventListener("submit", (event) => {
   const nodeX = parseFloat(document.getElementById("node-x").value);
   const nodeY = parseFloat(document.getElementById("node-y").value);
 
-  addNode(nodeName, nodeX, nodeY);
+  addNode(nodeName, nodeX, nodeY, true);
 
   clear(["node-name", "node-x", "node-y"]);
   toggle("add-node", "node-form");
@@ -129,7 +146,7 @@ document.getElementById("edge-form")?.addEventListener("submit", (event) => {
   const fromNode = document.getElementById("from-node").value;
   const toNode = document.getElementById("to-node").value;
 
-  addEdge(fromNode, toNode);
+  addEdge(fromNode, toNode, true);
 
   clear(["from-node", "to-node"]);
   toggle("add-edge", "edge-form");
@@ -149,7 +166,7 @@ document.getElementById("rm-edge-form")?.addEventListener("submit", (event) => {
   const fromNode = document.getElementById("rm-from-node").value;
   const toNode = document.getElementById("rm-to-node").value;
 
-  removeEdge(fromNode, toNode);
+  removeEdge(fromNode, toNode, true);
 
   clear(["rm-from-node", "rm-to-node"]);
 
@@ -173,7 +190,7 @@ document.getElementById("cancel-rm-node")?.addEventListener("click", () => {
 document.getElementById("rm-node-form")?.addEventListener("submit", (event) => {
   event.preventDefault();
   const nodeName = document.getElementById("rm-node-name").value;
-  removeNode(nodeName);
+  removeNode(nodeName, true);
 
   clear(["rm-node"]);
   toggle("rm-node", "rm-node-form");

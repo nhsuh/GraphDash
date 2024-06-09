@@ -1,6 +1,7 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { svg, line } from "../graph-svg.js";
 import { nodes, edges } from "./operations.js" 
+import { calculateEdges } from "./properties.js";
 export function dragstarted() {
   d3.select(this).classed("active", true);
 }
@@ -21,10 +22,15 @@ export function dragged(event, d) {
       ])
     );
   svg
-    .selectAll("text")
+    .selectAll(".node-labels")
     .data(nodes.values())
     .attr("x", (d) => d.x)
-    .attr("y", (d) => d.y);
+    .attr("y", (d) => d.y)
+calculateEdges()
+  svg.selectAll(".edge-weights")
+  .data(edges)
+  .attr("x", (d) => ((nodes.get(d[0][1]).x + nodes.get(d[0][0]).x ) / 2) + 10)
+  .attr("y", (d) => ((nodes.get(d[0][1]).y + nodes.get(d[0][0]).y) /2) -10 )
 }
 
 export function dragended(event, d) {
